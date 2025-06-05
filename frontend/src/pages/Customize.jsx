@@ -8,6 +8,7 @@ import image5 from "../assets/image5.png"
 import image6 from "../assets/image6.jpeg"
 import image7 from "../assets/image7.jpeg"
 import { RiImageAddLine } from "react-icons/ri";
+import { userDataContext } from '../context/userContext.jsx';
 
 function Customize() {
     const [frontendImage,setFrontendImage]=useState(null)
@@ -29,7 +30,7 @@ function Customize() {
                 'onClick={()=>inputImage.current.click()}>
                 <RiImageAddLine className='text-white w-[25px] h-[25px]'/>
                 </div>
-                <input> type='file' accept='image/*' ref={inputImage}</input>
+                <input type='file' accept='image/*' ref={inputImage} style={{ display: 'none' }} /> 
             </div>
             <button className='min-w-[150px] h-[60px] mt-[30px] bg-white rounded-full text-black font-semibold text-[19px]'>Next</button>
     </div>
