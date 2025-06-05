@@ -12,7 +12,7 @@ function App() {
         <Route
         path="/"
         element={
-          (userData?.aassistantIamge && userData?.assistantName)
+          (userData?.assistantIamge && userData?.assistantName)
             ? <Home />
             : <Navigate to="/customize" />
         }
