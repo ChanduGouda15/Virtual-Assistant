@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { userDataContext } from '../context/userContext';
 import axios from 'axios';
+import { MdKeyboardBackspace } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 function Customize2() {
   const { userData, selectedImage, serverUrl, setUserData } = useContext(userDataContext);
   const [AssistantName, setAssistantName] = useState(userData?.assistantName || "");
-  const [file, setFile] = useState(null);
+  const [loading,setLoading]=useState(null)
+  const navigate=useNavigate()
+  const [file, setFile] = useState(false);
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
@@ -14,14 +18,15 @@ function Customize2() {
   };
 
   const handleUpdateAssistant = async () => {
+    setLoading(true)
     try {
       const formData = new FormData();
       formData.append("assistantName", AssistantName);
 
       if (file) {
-        formData.append("assistantImage", file); // Must be exactly "assistantImage" for multer
+        formData.append("assistantImage", file); 
       } else if (selectedImage) {
-        formData.append("imageUrl", selectedImage); // Just send URL string if no file
+        formData.append("imageUrl", selectedImage); 
       }
 
       const result = await axios.post(
@@ -34,16 +39,19 @@ function Customize2() {
           },
         }
       );
-
+      setLoading(false)
       setUserData(result.data);
       console.log(result.data);
+      navigate("/")
     } catch (error) {
+      setLoading(false)
       console.error("Update failed:", error.response?.data || error.message);
     }
   };
 
   return (
-    <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353] flex justify-center items-center flex-col p-5'>
+    <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353] flex justify-center items-center flex-col p-5 relative'>
+      <MdKeyboardBackspace className='absolute text-white top-[30px] left-[30px] w-[25px] h-[25px] cursor-pointer' onClick={()=>navigate("/customize")}/>
       <h1 className='text-white text-3xl text-center p-5'>
         Enter your <span className='text-blue-200'>Assistant name</span>
       </h1>
@@ -66,9 +74,9 @@ function Customize2() {
       {AssistantName && (
         <button
           className='min-w-[300px] h-12 mt-5 bg-white rounded-full text-black font-semibold text-lg cursor-pointer'
-          onClick={handleUpdateAssistant}
+          disabled={loading} onClick={handleUpdateAssistant}
         >
-          Finally create your Assistant
+          {!loading?"Finally create your Assistant":"Loading..."}
         </button>
       )}
     </div>

@@ -1,44 +1,43 @@
 import React, { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Import your pages/components
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Customize from './pages/Customize';
 import Customize2 from './pages/Customize2';
-import Home from './pages/Home'; // You use <Home /> in your routes, so import it too
+import Home from './pages/Home';
 
 import { userDataContext } from './context/userContext';
-
-
-
 
 function App() {
   const { userData } = useContext(userDataContext);
 
-  // Handle loading state if userData is null but you are still checking auth
-  // For example, userData is null on first render but will be fetched asynchronously.
+  console.log("🚦 userData at App route:", userData);
 
   if (userData === undefined) {
-    // or some separate loading state you track
     return <div>Loading...</div>;
   }
+
+  const isLoggedIn = !!userData;
+  const isCustomized = userData?.assistantImage && userData?.assistantName;
 
   return (
     <Routes>
       <Route
         path="/"
         element={
-          (userData?.assistantImage && userData?.assistantName)
-            ? <Home />
-            : <Navigate to="/customize" />
+          !isLoggedIn
+            ? <Navigate to="/signin" />
+            : !isCustomized
+              ? <Navigate to="/customize" />
+              : <Home />
         }
       />
 
       <Route
         path="/signup"
         element={
-          !userData
+          !isLoggedIn
             ? <SignUp />
             : <Navigate to="/" />
         }
@@ -47,7 +46,7 @@ function App() {
       <Route
         path="/signin"
         element={
-          !userData
+          !isLoggedIn
             ? <SignIn />
             : <Navigate to="/" />
         }
@@ -56,23 +55,26 @@ function App() {
       <Route
         path="/customize"
         element={
-          !userData
-            ? <Customize />
-            : <Navigate to="/signin" />
+          !isLoggedIn
+            ? <Navigate to="/signin" />
+            : !isCustomized
+              ? <Customize />
+              : <Navigate to="/" />
         }
       />
 
       <Route
         path="/customize2"
         element={
-          !userData
-            ? <Customize2 />
-            : <Navigate to="/signin" />
+          !isLoggedIn
+            ? <Navigate to="/signin" />
+            : !isCustomized
+              ? <Customize2 />
+              : <Navigate to="/" />
         }
       />
     </Routes>
   );
 }
-
 
 export default App;
