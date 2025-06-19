@@ -39,9 +39,11 @@ export const askToAssistant=async (req,res)=>{
     try {
         const {command}=req.body
         const user=await User.findById(req.userId)
+        user.history.push(command)
+        user.save()
         const userName=user.name
         const assistantName=user.assistantName
-        const result=await geminiResponse(command,userName,assistantName)
+        const result=await geminiResponse(command,assistantName,userName)
         
         const jsonMatch = result.match(/{[\s\S]*}/);
         if(!jsonMatch){
@@ -53,29 +55,29 @@ export const askToAssistant=async (req,res)=>{
 
 
         switch(type){
-            case 'get_date': 
+            case 'get-date': 
             return res.json({
                 type,
                 userInput: gemResult.userInput,
                 response:`current date is ${moment().format("YYYY-MM-DD")}`
             });
-            case 'get_time':
+            case 'get-time':
             return res.json({
                 type,
                 userInput: gemResult.userInput,
-                response:`current date is ${moment().format("hh:mm A")}`
+                response:`current time is ${moment().format("hh:mm A")}`
             });
-            case 'get_day':
+            case 'get-day':
             return res.json({
                 type,
                 userInput: gemResult.userInput,
-                response:`current date is ${moment().format("dddd")}`
+                response:`current day is ${moment().format("dddd")}`
             });
-            case 'get_month':
+            case 'get-month':
             return res.json({
                 type,
                 userInput: gemResult.userInput,
-                response:`current date is ${moment().format("MMMM")}`
+                response:`current month is ${moment().format("MMMM")}`
             });
         case 'google-search':
         case 'youtube-search':

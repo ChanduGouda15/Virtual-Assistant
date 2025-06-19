@@ -7,74 +7,19 @@ import Customize from './pages/Customize';
 import Customize2 from './pages/Customize2';
 import Home from './pages/Home';
 
-import { userDataContext } from './context/userContext';
+import { userDataContext } from './context/UserContext.jsx';
 
 function App() {
-  const { userData } = useContext(userDataContext);
-
-  console.log("🚦 userData at App route:", userData);
-
-  if (userData === undefined) {
-    return <div>Loading...</div>;
-  }
-
-  const isLoggedIn = !!userData;
-  const isCustomized = userData?.assistantImage && userData?.assistantName;
-
+  const {userData,setUserData}=useContext(userDataContext)
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          !isLoggedIn
-            ? <Navigate to="/signin" />
-            : !isCustomized
-              ? <Navigate to="/customize" />
-              : <Home />
-        }
-      />
-
-      <Route
-        path="/signup"
-        element={
-          !isLoggedIn
-            ? <SignUp />
-            : <Navigate to="/" />
-        }
-      />
-
-      <Route
-        path="/signin"
-        element={
-          !isLoggedIn
-            ? <SignIn />
-            : <Navigate to="/" />
-        }
-      />
-
-      <Route
-        path="/customize"
-        element={
-          !isLoggedIn
-            ? <Navigate to="/signin" />
-            : !isCustomized
-              ? <Customize />
-              : <Navigate to="/" />
-        }
-      />
-
-      <Route
-        path="/customize2"
-        element={
-          !isLoggedIn
-            ? <Navigate to="/signin" />
-            : !isCustomized
-              ? <Customize2 />
-              : <Navigate to="/" />
-        }
-      />
-    </Routes>
-  );
+   <Routes>
+     <Route path='/' element={(userData?.assistantImage && userData?.assistantName)? <Home/> :<Navigate to={"/customize"}/>}/>
+    <Route path='/signup' element={!userData?<SignUp/>:<Navigate to={"/"}/>}/>
+     <Route path='/signin' element={!userData?<SignIn/>:<Navigate to={"/"}/>}/>
+      <Route path='/customize' element={userData?<Customize/>:<Navigate to={"/signup"}/>}/>
+       <Route path='/customize2' element={userData?<Customize2/>:<Navigate to={"/signup"}/>}/>
+   </Routes>
+  )
 }
 
-export default App;
+export default App
