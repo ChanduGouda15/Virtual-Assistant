@@ -13,8 +13,10 @@ const app = express();
 
 // Allow cookies across origins only from your frontend
 app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || 'https://virtual-assistant-frontend-axnd.onrender.com',
-  credentials: true
+  origin: process.env.FRONTEND_ORIGIN,  
+  credentials: true,                    
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 
